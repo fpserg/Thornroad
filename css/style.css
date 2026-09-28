@@ -227,7 +227,7 @@ h1 {
 #storypane {
   flex: 1;
   max-width: var(--maxw); width: 100%; margin: 0 auto;
-  padding: 20px 20px 12px;
+  padding: 16px 14px 12px;
   overflow-y: auto;
 }
 .story-text {
@@ -235,17 +235,65 @@ h1 {
   white-space: pre-line;
 }
 .story-text p { margin: 0 0 1em; }
+.story-text p:first-child::first-letter {
+  font-family: var(--serif); font-weight: 600; color: var(--gold);
+  float: left; font-size: 3.1em; line-height: .78; padding: 3px 8px 0 1px;
+}
 .story-extra { margin-top: 16px; }
 
-/* ---------------- ZONE BANNER ---------------- */
-.zone-banner {
-  height: 84px;
-  margin: 0 0 16px;
-  border-radius: var(--radius);
-  overflow: hidden;
+/* ---------------- BOOK PAGE FRAME ---------------- */
+/* A framed "page" wrapper used on the play, title and ending screens, with
+   four corner-flourish ornaments (a single <symbol> reused via <use>) and a
+   faint paper-grain texture. Purely decorative — never wraps interactive
+   elements that need their own layout. */
+.book-page {
+  position: relative;
+  background:
+    radial-gradient(130% 90% at 20% -10%, rgba(233,227,210,0.05), transparent 55%),
+    linear-gradient(180deg, var(--ink-2), var(--ink) 88%);
   border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 26px 22px 20px;
+  margin: 0 0 16px;
+  box-shadow:
+    0 0 0 1px rgba(201,162,75,0.14),
+    inset 0 0 46px rgba(0,0,0,0.38),
+    0 12px 26px rgba(0,0,0,0.32);
+}
+.book-page::before {
+  content: "";
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background-image: radial-gradient(rgba(233,227,210,0.035) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+.page-corner {
+  position: absolute; width: 26px; height: 26px; color: var(--gold); opacity: .5; pointer-events: none;
+}
+.pc-tl { top: 7px; left: 7px; }
+.pc-tr { top: 7px; right: 7px; transform: scaleX(-1); }
+.pc-bl { bottom: 7px; left: 7px; transform: scaleY(-1); }
+.pc-br { bottom: 7px; right: 7px; transform: scale(-1, -1); }
+.page-divider {
+  display: block; width: 100%; max-width: 190px; height: 12px;
+  margin: 2px auto 16px; color: var(--gold); opacity: .5;
+}
+.title-wrap .page-divider { margin: 6px auto 14px; }
+
+.cover-page { text-align: center; }
+.end-page { margin-bottom: 18px; }
+
+/* the "book plate" frame shared by zone illustrations and ending illustrations */
+.book-plate {
+  position: relative;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid var(--gold);
+  box-shadow: 0 0 0 4px var(--ink), 0 0 0 5px var(--line);
   background: var(--ink-2);
 }
+
+/* ---------------- ZONE BANNER ---------------- */
+.zone-banner.book-plate { height: 152px; margin: 0 0 6px; }
 .zone-banner:empty { display: none; }
 .zone-svg { width: 100%; height: 100%; display: block; }
 
@@ -283,6 +331,17 @@ h1 {
 .zone-svg .zb-spark-b { animation: zbTwinkle 3.6s ease-in-out infinite; animation-delay: -1s; }
 .zone-svg .zb-spark-c { animation: zbTwinkle 2.6s ease-in-out infinite; animation-delay: -1.8s; }
 .zone-svg .zb-spark-d { animation: zbTwinkle 4s ease-in-out infinite; animation-delay: -0.6s; }
+
+.zone-svg .zb-dawn-pulse { animation: zbPulse 4.2s ease-in-out infinite; }
+.zone-svg .zb-dawn-rays line { stroke: var(--gold); stroke-width: 1.5; opacity: .3; }
+.zone-svg .zb-spire-gold { stroke: var(--gold); opacity: .55; }
+.zone-svg .zb-bloom-vine { fill: none; stroke: var(--moss); stroke-width: 1.5; opacity: .6; }
+.zone-svg .zb-bloom { fill: var(--gold); opacity: .85; }
+.zone-svg .zb-retreat-path { fill: none; stroke: var(--parchment-dim); stroke-width: 2; stroke-dasharray: 3 5; opacity: .45; }
+.zone-svg .zb-cracks-wide { stroke: var(--danger); stroke-width: 1.3; opacity: .4; }
+.zone-svg .zb-candle-glow-dim { opacity: .22; animation: zbFlicker 3.4s ease-in-out infinite; }
+.zone-svg .zb-flame-dying { fill: var(--rust); opacity: .75; animation: zbFlicker 2.6s ease-in-out infinite; }
+.zone-svg .zb-wilt-vine { fill: none; stroke: var(--rust); stroke-width: 1.4; opacity: .4; }
 
 @keyframes zbFogDrift { from { transform: translateX(-14px); } to { transform: translateX(14px); } }
 @keyframes zbWaterShift { from { transform: translateX(0); } to { transform: translateX(-40px); } }
@@ -450,6 +509,7 @@ h1 {
 
 /* ---- ending ---- */
 .end-panel { text-align: center; }
+.end-plate.book-plate { height: 168px; max-width: 420px; margin: 0 auto 16px; }
 .end-badge {
   width: 48px; height: 48px; margin: 0 auto 14px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; font-size: 1.3rem;

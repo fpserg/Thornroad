@@ -13,6 +13,7 @@
   const SHOP_ITEMS_RU = T.SHOP_ITEMS_RU || {};
   const SPELL_STRINGS_RU = T.SPELL_STRINGS_RU || {};
   const ZONE_BANNERS = T.ZONE_BANNERS || {};
+  const ENDING_BANNERS = T.ENDING_BANNERS || {};
   const zoneFor = T.zoneFor || function () { return 'forest'; };
   const DiceFX = T.DiceFX || null;
 
@@ -877,6 +878,8 @@
     const stats = document.getElementById('end-stats');
     badge.className = 'end-badge ' + node.ending.type;
     badge.textContent = node.ending.type === 'victory' ? '✓' : (node.ending.type === 'retreat' ? '~' : '✕');
+    const plate = document.getElementById('end-plate');
+    if (plate) plate.innerHTML = ENDING_BANNERS[node.ending.type] || '';
     title.textContent = node.ending.title;
     let body = node.text;
     if (node.ending.type === 'death') {

@@ -35,7 +35,7 @@
 
   const ZONE_BANNERS = {
     forest: `
-      <svg viewBox="0 0 400 96" preserveAspectRatio="xMidYMid slice" class="zone-svg zone-forest" aria-hidden="true">
+      <svg viewBox="0 0 400 96" preserveAspectRatio="xMidYMid meet" class="zone-svg zone-forest" aria-hidden="true">
         <circle cx="336" cy="26" r="13" class="zb-moon"/>
         <g class="zb-pines-back">
           <polygon points="20,88 44,40 68,88"/>
@@ -55,7 +55,12 @@
         </g>
       </svg>`,
     river: `
-      <svg viewBox="0 0 400 96" preserveAspectRatio="xMidYMid slice" class="zone-svg zone-river" aria-hidden="true">
+      <svg viewBox="0 0 400 96" preserveAspectRatio="xMidYMid meet" class="zone-svg zone-river" aria-hidden="true">
+        <g class="zb-sparks">
+          <circle cx="60" cy="12" r="1.2" class="zb-spark zb-spark-a"/>
+          <circle cx="140" cy="8" r="1.4" class="zb-spark zb-spark-c"/>
+          <circle cx="230" cy="14" r="1.1" class="zb-spark zb-spark-b"/>
+        </g>
         <g class="zb-spire-far">
           <path d="M300 66 L308 24 L316 66 M314 66 L324 14 L334 66 M332 66 L340 30 L348 66"/>
         </g>
@@ -68,7 +73,12 @@
         </g>
       </svg>`,
     courtyard: `
-      <svg viewBox="0 0 400 96" preserveAspectRatio="xMidYMid slice" class="zone-svg zone-courtyard" aria-hidden="true">
+      <svg viewBox="0 0 400 96" preserveAspectRatio="xMidYMid meet" class="zone-svg zone-courtyard" aria-hidden="true">
+        <g class="zb-sparks">
+          <circle cx="150" cy="6" r="1.1" class="zb-spark zb-spark-b"/>
+          <circle cx="200" cy="4" r="1.3" class="zb-spark zb-spark-d"/>
+          <circle cx="250" cy="7" r="1" class="zb-spark zb-spark-a"/>
+        </g>
         <g class="zb-wall">
           <rect x="0" y="46" width="400" height="44"/>
           <rect x="30" y="10" width="34" height="40"/>
@@ -93,7 +103,7 @@
         </g>
       </svg>`,
     dungeon: `
-      <svg viewBox="0 0 400 96" preserveAspectRatio="xMidYMid slice" class="zone-svg zone-dungeon" aria-hidden="true">
+      <svg viewBox="0 0 400 96" preserveAspectRatio="xMidYMid meet" class="zone-svg zone-dungeon" aria-hidden="true">
         <g class="zb-bars">
           <rect x="40" y="0" width="6" height="96"/><rect x="70" y="0" width="6" height="96"/>
           <rect x="100" y="0" width="6" height="96"/><rect x="130" y="0" width="6" height="96"/>
@@ -110,7 +120,7 @@
         </g>
       </svg>`,
     sanctum: `
-      <svg viewBox="0 0 400 96" preserveAspectRatio="xMidYMid slice" class="zone-svg zone-sanctum" aria-hidden="true">
+      <svg viewBox="0 0 400 96" preserveAspectRatio="xMidYMid meet" class="zone-svg zone-sanctum" aria-hidden="true">
         <defs>
           <radialGradient id="zbDaisGlow" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stop-color="var(--rust)" stop-opacity="0.55"/>
@@ -133,6 +143,60 @@
   };
 
   function zoneFor(nodeId) { return ZONE_FOR_NODE[nodeId] || 'forest'; }
+
+  // ---------------- ENDING PLATES ----------------
+  // One original illustration per ending type, shown as the book-plate on the
+  // ending screen instead of reusing a zone banner.
+  const ENDING_BANNERS = {
+    victory: `
+      <svg viewBox="0 0 350 140" preserveAspectRatio="xMidYMid meet" class="zone-svg zone-ending zone-ending-victory" aria-hidden="true">
+        <defs>
+          <radialGradient id="zbDawnGlow" cx="50%" cy="62%" r="55%">
+            <stop offset="0%" stop-color="var(--gold)" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="var(--gold)" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="175" cy="95" rx="170" ry="55" fill="url(#zbDawnGlow)" class="zb-dawn-pulse"/>
+        <g class="zb-dawn-rays">
+          <line x1="175" y1="95" x2="175" y2="20"/>
+          <line x1="175" y1="95" x2="110" y2="35"/>
+          <line x1="175" y1="95" x2="240" y2="35"/>
+          <line x1="175" y1="95" x2="60" y2="60"/>
+          <line x1="175" y1="95" x2="290" y2="60"/>
+        </g>
+        <path d="M100 140 L118 70 L136 140 M130 140 L150 55 L170 140 M164 140 L184 70 L204 140" class="zb-spire-far zb-spire-gold"/>
+        <path d="M20 130 C 60 110, 80 132, 120 118 C 150 108, 170 128, 210 116 C 250 106, 270 126, 330 112" class="zb-bloom-vine"/>
+        <circle cx="60" cy="118" r="2.4" class="zb-bloom"/>
+        <circle cx="150" cy="112" r="2" class="zb-bloom"/>
+        <circle cx="240" cy="110" r="2.2" class="zb-bloom"/>
+        <circle cx="300" cy="106" r="1.8" class="zb-bloom"/>
+      </svg>`,
+    retreat: `
+      <svg viewBox="0 0 350 140" preserveAspectRatio="xMidYMid meet" class="zone-svg zone-ending zone-ending-retreat" aria-hidden="true">
+        <circle cx="290" cy="30" r="14" class="zb-moon"/>
+        <g class="zb-pines-back">
+          <polygon points="10,140 40,80 70,140"/>
+          <polygon points="270,140 300,76 330,140"/>
+        </g>
+        <path d="M175 140 C 165 110, 190 90, 175 60 C 160 40, 185 25, 175 8" class="zb-retreat-path"/>
+        <g class="zb-mist">
+          <ellipse cx="90" cy="118" rx="130" ry="10"/>
+          <ellipse cx="260" cy="128" rx="150" ry="11"/>
+        </g>
+      </svg>`,
+    death: `
+      <svg viewBox="0 0 350 140" preserveAspectRatio="xMidYMid meet" class="zone-svg zone-ending zone-ending-death" aria-hidden="true">
+        <g class="zb-cracks zb-cracks-wide">
+          <path d="M175 140 L150 100"/><path d="M175 140 L205 95"/><path d="M175 140 L175 80"/>
+          <path d="M175 140 L120 130"/><path d="M175 140 L235 132"/>
+        </g>
+        <line x1="175" y1="36" x2="175" y2="80" class="zb-candle-stick"/>
+        <circle cx="175" cy="30" r="12" class="zb-candle-glow zb-candle-glow-dim"/>
+        <path d="M171 26 Q175 12 179 26 Q177 20 175 26 Q173 20 171 26 Z" class="zb-flame zb-flame-dying"/>
+        <path d="M60 140 C 80 132, 70 118, 90 112 C 105 108, 95 96, 112 92" class="zb-wilt-vine"/>
+        <path d="M290 140 C 270 132, 280 118, 260 112 C 245 108, 255 96, 238 92" class="zb-wilt-vine"/>
+      </svg>`
+  };
 
   // ---------------- DICE FX ----------------
   // Pip layouts for a standard d6 face, 1-6.
@@ -279,6 +343,7 @@
   global.Thornroad = global.Thornroad || {};
   global.Thornroad.ZONE_FOR_NODE = ZONE_FOR_NODE;
   global.Thornroad.ZONE_BANNERS = ZONE_BANNERS;
+  global.Thornroad.ENDING_BANNERS = ENDING_BANNERS;
   global.Thornroad.zoneFor = zoneFor;
   global.Thornroad.DiceFX = { rollDie, rollTwoDice, rollPowerClash, prefersReducedMotion };
 })(window);
