@@ -36,10 +36,12 @@
 
   function statRow(sum) {
     // Own balance table (2d6 sum -> Skill, Stamina, Charm). Not derived from any source text.
+    // Stamina raised ~15-20% over the original vertical-slice numbers so an unlucky run
+    // isn't a near-certain death sentence; Skill spread left as-is.
     const T = {
-      2:  [7, 20, 8], 3:  [9, 18, 6], 4:  [11, 15, 5], 5:  [8, 17, 8],
-      6:  [10, 19, 6], 7: [8, 19, 7], 8:  [9, 15, 7], 9:  [7, 23, 7],
-      10: [8, 21, 6], 11: [9, 17, 7], 12: [10, 19, 5]
+      2:  [7, 24, 8], 3:  [9, 22, 6], 4:  [11, 18, 5], 5:  [8, 20, 8],
+      6:  [10, 23, 6], 7: [8, 23, 7], 8:  [9, 19, 7], 9:  [7, 27, 7],
+      10: [8, 25, 6], 11: [9, 21, 7], 12: [10, 23, 5]
     };
     return T[sum];
   }
@@ -60,6 +62,12 @@
 
   Engine.prototype.rollDie = function () { return 1 + Math.floor(this.rng() * 6); };
   Engine.prototype.roll2 = function () { return this.rollDie() + this.rollDie(); };
+  // Same two rolls as roll2(), but also hands back the individual faces so the
+  // UI can animate a real pair of dice landing on the true result.
+  Engine.prototype.roll2Faces = function () { const a = this.rollDie(), b = this.rollDie(); return { a, b, sum: a + b }; };
+  // Same roll as roll2Power(), but also hands back the raw die face for the
+  // combat-roll dice animation.
+  Engine.prototype.roll2PowerFace = function (skill) { const die = this.rollDie(); return { die, power: die * 2 + skill }; };
 
   Engine.prototype.loadMeta = function () {
     try {
@@ -73,9 +81,9 @@
   };
 
   Engine.prototype.rollNewCharacter = function () {
-    const sum = this.roll2();
+    const { a, b, sum } = this.roll2Faces();
     const [skill, stamina, charm] = statRow(sum);
-    return { skill, stamina, charm, sum };
+    return { skill, stamina, charm, sum, diceA: a, diceB: b };
   };
 
   Engine.prototype.newGame = function (stats, spellLoadout) {
@@ -199,11 +207,11 @@
 
   // ---- charm ----
   Engine.prototype.checkCharm = function () {
-    const roll = this.roll2();
+    const { a, b, sum: roll } = this.roll2Faces();
     const success = roll <= this.state.charm;
     if (success) { this.state.charm = Math.min(12, this.state.charm + 1); }
     else { this.state.charm = Math.max(1, this.state.charm - 1); }
-    return { roll, success, charm: this.state.charm };
+    return { roll, success, charm: this.state.charm, diceA: a, diceB: b };
   };
 
   // ---- combat ----
@@ -324,13 +332,17 @@
     const target = alive.find(e => e.id === targetId) || alive[0];
     c.target = target.id;
     const playerSkill = s.skill + (c.playerSkillBonus || 0) - (c.groundPenalty || 0);
-    const playerPower = this.roll2Power(playerSkill);
+    const playerRoll = this.roll2PowerFace(playerSkill);
+    const playerPower = playerRoll.power;
+    const playerDie = playerRoll.die;
 
     const results = [];
     let playerHit = false, playerHitDmg = 0;
 
     alive.forEach(enemy => {
-      const enemyPower = this.roll2Power(enemy.skill + enemy.skillMod);
+      const enemyRoll = this.roll2PowerFace(enemy.skill + enemy.skillMod);
+      const enemyPower = enemyRoll.power;
+      const enemyDie = enemyRoll.die;
       let outcome;
       if (enemy.id === target.id) {
         if (playerPower > enemyPower) {
@@ -361,7 +373,7 @@
         }
       }
       if (enemy.loyalty !== null && enemy.loyalty <= 3 && !enemy.dead) { enemy.fled = true; }
-      results.push({ id: enemy.id, name: enemy.name, enemyPower, outcome, fled: enemy.fled, dead: enemy.dead });
+      results.push({ id: enemy.id, name: enemy.name, enemyPower, enemyDie, outcome, fled: enemy.fled, dead: enemy.dead });
     });
 
     if (playerHit) this.damageStamina(playerHitDmg);
@@ -371,7 +383,7 @@
     const victory = stillAlive.length === 0;
     const defeat = s.stamina <= 0;
 
-    return { over: victory || defeat, victory, defeat, playerPower, playerHitDmg, results };
+    return { over: victory || defeat, victory, defeat, playerPower, playerDie, playerHitDmg, results };
   };
 
   Engine.prototype.endCombat = function () {

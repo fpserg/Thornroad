@@ -32,7 +32,7 @@
     },
     lc_rockslide_hurt: {
       text: `You're too slow reading the ground. A stone catches your shoulder and knocks you flat before the slide passes.`,
-      onEnter: { effects: [{ type: 'stat', stat: 'stamina', delta: -3 }] },
+      onEnter: { effects: [{ type: 'stat', stat: 'stamina', delta: -2 }] },
       choices: [{ label: 'Get up and keep moving', to: 'n6' }]
     },
 
@@ -130,8 +130,8 @@
       text: `Two gaunt figures come out of the dark at once, rags belted with good leather taken from better-fed men. Hollow-men — Fenhollow folk the Hush drove past hunger into something meaner.`,
       combat: {
         enemies: [
-          { name: 'Hollow-man', skill: 6, stamina: 7 },
-          { name: 'Hollow-man', skill: 5, stamina: 6 }
+          { name: 'Hollow-man', skill: 5, stamina: 6 },
+          { name: 'Hollow-man', skill: 4, stamina: 5 }
         ],
         allowSpells: ['quick', 'weaken', 'flame', 'mirror'],
         illusionEscape: { to: 'n18', text: `You show them a lie worth more than what little you carry, and back away while they're still arguing over it.` },
@@ -152,8 +152,8 @@
       text: `Two Ashguard hold the bridge, black iron dull with river damp. They see you before you can decide anything clever.`,
       combat: {
         enemies: [
-          { name: 'Ashguard', skill: 8, stamina: 9, loyalty: 10 },
-          { name: 'Ashguard', skill: 7, stamina: 8, loyalty: 9 }
+          { name: 'Ashguard', skill: 7, stamina: 8, loyalty: 10 },
+          { name: 'Ashguard', skill: 6, stamina: 7, loyalty: 9 }
         ],
         allowSpells: ['quick', 'weaken', 'flame', 'mirror'],
         onVictory: 'n30'
@@ -168,7 +168,7 @@
     n25_caught: {
       text: `You come up the far bank straight into a river patrol.`,
       combat: {
-        enemies: [{ name: 'Ashguard scout', skill: 7, stamina: 8, loyalty: 8 }],
+        enemies: [{ name: 'Ashguard scout', skill: 6, stamina: 7, loyalty: 8 }],
         allowSpells: ['quick', 'weaken', 'flame', 'mirror'],
         illusionEscape: { to: 'n30', text: `The scout blinks at something that was never there, and you're past him and into the courtyard before the confusion clears.` },
         onVictory: 'n30'
@@ -208,7 +208,7 @@
     n33_wake: {
       text: `A board gives under your foot and he's up with a shout before you've finished cursing your luck.`,
       combat: {
-        enemies: [{ name: 'Ashguard', skill: 7, stamina: 8, loyalty: 9 }],
+        enemies: [{ name: 'Ashguard', skill: 6, stamina: 7, loyalty: 9 }],
         allowSpells: ['quick', 'weaken', 'flame', 'mirror'],
         onVictory: 'n33_loot'
       }
@@ -262,7 +262,7 @@
     n32_fight: {
       text: `There's no talking to this one. He comes at you like the door behind him is the only thing worth defending in the world.`,
       combat: {
-        enemies: [{ name: 'Ash Knight captain', skill: 10, stamina: 12, loyalty: 14, dmg: 2 }],
+        enemies: [{ name: 'Ash Knight captain', skill: 9, stamina: 11, loyalty: 13, dmg: 2 }],
         allowSpells: ['quick', 'weaken', 'flame', 'mirror'],
         onVictory: 'n40'
       }
@@ -299,7 +299,7 @@
     },
     n44_hurt: {
       text: `A painted archer's arrow finds you exactly as if it were real. It is, for just long enough to hurt.`,
-      onEnter: { effects: [{ type: 'stat', stat: 'stamina', delta: -3 }] },
+      onEnter: { effects: [{ type: 'stat', stat: 'stamina', delta: -2 }] },
       choices: [{ label: 'Back away and return to the hall', to: 'n40_back' }]
     },
     n40_back: {
@@ -352,12 +352,12 @@
     },
     n46_left: {
       text: `The left door opens on nothing at all — a black drop with no far wall you can find. You catch the frame just in time, heart slamming, and haul yourself back before the pull of it decides the matter for you.`,
-      onEnter: { effects: [{ type: 'stat', stat: 'stamina', delta: -4 }] },
+      onEnter: { effects: [{ type: 'stat', stat: 'stamina', delta: -3 }] },
       choices: [{ label: 'Try another door', to: 'n46' }]
     },
     n46_right: {
       text: `Heat rolls out the instant the right door cracks open — a room built to burn whatever crosses its threshold. You slam it shut, singed and coughing.`,
-      onEnter: { effects: [{ type: 'stat', stat: 'stamina', delta: -4 }] },
+      onEnter: { effects: [{ type: 'stat', stat: 'stamina', delta: -3 }] },
       choices: [{ label: 'Try another door', to: 'n46' }]
     },
     n46_mid: {
@@ -390,7 +390,7 @@
     n51: {
       text: `Vail Thorne doesn't reach for a weapon — he doesn't need one. The air around him thickens, and whatever spell you're most proud of suddenly feels like it belongs to him instead.`,
       combat: {
-        enemies: [{ name: 'Vail Thorne', skill: 9, stamina: 16, loyalty: null, dmg: 2 }],
+        enemies: [{ name: 'Vail Thorne', skill: 8, stamina: 14, loyalty: null, dmg: 2 }],
         allowSpells: ['quick', 'weaken', 'flame', 'mirror'],
         mirrorCurseRound1: true,
         onVictory: 'n60'

@@ -26,62 +26,64 @@
         </svg>
       </div>
       <h1>Thornroad</h1>
-      <p class="title-sub">A gamebook of the Hush and the Cinder Spire</p>
+      <p class="title-sub" data-i18n="titleSub">A gamebook of the Hush and the Cinder Spire</p>
       <div class="title-actions">
-        <button class="btn btn-primary" id="btn-new-game">Set out</button>
-        <button class="btn btn-ghost" id="btn-continue" hidden>Continue journey</button>
+        <button class="btn btn-primary" id="btn-new-game" data-i18n="setOut">Set out</button>
+        <button class="btn btn-ghost" id="btn-continue" hidden data-i18n="continueJourney">Continue journey</button>
       </div>
-      <button class="link-btn" id="btn-how-to-play">How this works</button>
+      <button class="link-btn" id="btn-how-to-play" data-i18n="howItWorks">How this works</button>
       <p class="title-meta" id="title-meta"></p>
+      <button class="locale-btn" id="btn-locale" aria-label="Switch language" title="Switch language">RU</button>
     </div>
   </section>
 
   <!-- ===================== HOW TO PLAY ===================== -->
   <section id="screen-help" class="screen" hidden>
     <div class="panel-scroll">
-      <h2>How this works</h2>
-      <p>Thornroad is a dice-driven gamebook. You read a scene and choose what to do; the road, the dice, and your gear decide the rest.</p>
+      <h2 data-i18n="howItWorks">How this works</h2>
+      <p data-i18n="helpP1">Thornroad is a dice-driven gamebook. You read a scene and choose what to do; the road, the dice, and your gear decide the rest.</p>
       <ul class="help-list">
-        <li><strong>Skill, Stamina, Charm</strong> — rolled once at the start. Stamina is your health: at zero, your journey ends. Skill and Charm can rise or fall in play but never above where you began.</li>
-        <li><strong>Luck</strong> — six boxes. Testing your luck crosses one out; if it was already crossed, fortune wasn't with you. Crossed boxes can sometimes be cleared again.</li>
-        <li><strong>Combat</strong> — each round you and a foe both roll; whoever rolls higher wounds the other for 2 Stamina (ties are a parry). Some foes have Loyalty: wound them enough, or outlast them, and they'll break and run.</li>
-        <li><strong>Spells</strong> — chosen before you leave, ten charges to spend however you like across eight spells. Once cast, a spell is gone for the rest of the journey.</li>
-        <li><strong>The pack</strong> — seven slots for whatever you find or buy. Choose carefully.</li>
+        <li data-i18n-html="helpLi1_html"><strong>Skill, Stamina, Charm</strong> — rolled once at the start. Stamina is your health: at zero, your journey ends. Skill and Charm can rise or fall in play but never above where you began.</li>
+        <li data-i18n-html="helpLi2_html"><strong>Luck</strong> — six boxes. Testing your luck crosses one out; if it was already crossed, fortune wasn't with you. Crossed boxes can sometimes be cleared again.</li>
+        <li data-i18n-html="helpLi3_html"><strong>Combat</strong> — each round you and a foe both roll; whoever rolls higher wounds the other for 2 Stamina (ties are a parry). Some foes have Loyalty: wound them enough, or outlast them, and they'll break and run.</li>
+        <li data-i18n-html="helpLi4_html"><strong>Spells</strong> — chosen before you leave, ten charges to spend however you like across eight spells. Once cast, a spell is gone for the rest of the journey.</li>
+        <li data-i18n-html="helpLi5_html"><strong>The pack</strong> — seven slots for whatever you find or buy. Choose carefully.</li>
       </ul>
-      <p>If your journey ends, the road remembers a little of what you learned — riddle answers and shortcuts stay with you next time.</p>
-      <button class="btn btn-primary" id="btn-help-back">Back</button>
+      <p data-i18n="helpP2">If your journey ends, the road remembers a little of what you learned — riddle answers and shortcuts stay with you next time.</p>
+      <button class="btn btn-primary" id="btn-help-back" data-i18n="back">Back</button>
     </div>
   </section>
 
   <!-- ===================== CHARACTER CREATION ===================== -->
   <section id="screen-create" class="screen" hidden>
     <div class="panel-scroll">
-      <h2>Who sets out</h2>
-      <p class="muted">Roll to find out what you're made of. You'll carry these starting numbers as your ceiling for the whole journey.</p>
+      <h2 data-i18n="whoSetsOut">Who sets out</h2>
+      <p class="muted" data-i18n="createMuted">Roll to find out what you're made of. You'll carry these starting numbers as your ceiling for the whole journey.</p>
       <div class="roll-card">
-        <button class="btn btn-primary" id="btn-roll">Roll the dice</button>
+        <button class="btn btn-primary" id="btn-roll" data-i18n="rollDice">Roll the dice</button>
+        <div id="create-dice-stage"></div>
         <div id="roll-result" class="roll-result" hidden>
-          <div class="stat-row"><span>Skill</span><strong id="roll-skill"></strong></div>
-          <div class="stat-row"><span>Stamina</span><strong id="roll-stamina"></strong></div>
-          <div class="stat-row"><span>Charm</span><strong id="roll-charm"></strong></div>
+          <div class="stat-row"><span data-i18n="skill">Skill</span><strong id="roll-skill"></strong></div>
+          <div class="stat-row"><span data-i18n="stamina">Stamina</span><strong id="roll-stamina"></strong></div>
+          <div class="stat-row"><span data-i18n="charm">Charm</span><strong id="roll-charm"></strong></div>
         </div>
       </div>
       <div class="seed-row">
-        <label for="seed-input">Seed (optional, for a shared or repeatable road)</label>
-        <input id="seed-input" type="text" placeholder="leave blank for a fresh road" autocomplete="off" spellcheck="false">
+        <label for="seed-input" data-i18n="seedLabel">Seed (optional, for a shared or repeatable road)</label>
+        <input id="seed-input" type="text" placeholder="leave blank for a fresh road" data-i18n-placeholder="seedPlaceholder" autocomplete="off" spellcheck="false">
       </div>
-      <button class="btn btn-primary" id="btn-to-spells" disabled>Choose spells</button>
+      <button class="btn btn-primary" id="btn-to-spells" disabled data-i18n="chooseSpells">Choose spells</button>
     </div>
   </section>
 
   <!-- ===================== SPELL LOADOUT ===================== -->
   <section id="screen-spells" class="screen" hidden>
     <div class="panel-scroll">
-      <h2>Ten charges, eight spells</h2>
-      <p class="muted">Hale can only teach you ten castings in the time you have. Spend them however you like — repeats are allowed.</p>
+      <h2 data-i18n="tenChargesEight">Ten charges, eight spells</h2>
+      <p class="muted" data-i18n="spellsMuted">Hale can only teach you ten castings in the time you have. Spend them however you like — repeats are allowed.</p>
       <div id="spell-list" class="spell-list"></div>
-      <div class="spell-total">Charges assigned: <strong id="spell-total">0</strong> / 10</div>
-      <button class="btn btn-primary" id="btn-to-play" disabled>Take the road</button>
+      <div class="spell-total"><span data-i18n="chargesAssigned">Charges assigned:</span> <strong id="spell-total">0</strong> / 10</div>
+      <button class="btn btn-primary" id="btn-to-play" disabled data-i18n="takeTheRoad">Take the road</button>
     </div>
   </section>
 
@@ -89,16 +91,17 @@
   <section id="screen-play" class="screen" hidden>
     <header id="statusbar">
       <div class="stat-pips">
-        <div class="pip" id="pip-skill" title="Skill"><span class="pip-label">SKL</span><span class="pip-val">0</span></div>
-        <div class="pip" id="pip-stamina" title="Stamina"><span class="pip-label">STA</span><span class="pip-val">0</span></div>
-        <div class="pip" id="pip-charm" title="Charm"><span class="pip-label">CHM</span><span class="pip-val">0</span></div>
-        <div class="pip pip-coins" id="pip-coins" title="Coins"><span class="pip-label">⛁</span><span class="pip-val">0</span></div>
+        <div class="pip" id="pip-skill" title="Skill" data-i18n-title="skill"><span class="pip-label" data-i18n="sklAbbr">SKL</span><span class="pip-val">0</span></div>
+        <div class="pip" id="pip-stamina" title="Stamina" data-i18n-title="stamina"><span class="pip-label" data-i18n="staAbbr">STA</span><span class="pip-val">0</span></div>
+        <div class="pip" id="pip-charm" title="Charm" data-i18n-title="charm"><span class="pip-label" data-i18n="chmAbbr">CHM</span><span class="pip-val">0</span></div>
+        <div class="pip pip-coins" id="pip-coins" title="Coins" data-i18n-title="coins"><span class="pip-label">⛁</span><span class="pip-val">0</span></div>
       </div>
-      <div class="luck-boxes" id="luck-boxes" title="Luck"></div>
-      <button class="menu-btn" id="btn-menu" aria-label="Open pack, spells and journal">☰</button>
+      <div class="luck-boxes" id="luck-boxes" title="Luck" data-i18n-title="luck"></div>
+      <button class="menu-btn" id="btn-menu" aria-label="Open pack, spells and journal" data-i18n-aria="menuAria">☰</button>
     </header>
 
     <main id="storypane">
+      <div id="zone-banner" class="zone-banner"></div>
       <div id="story-text" class="story-text"></div>
       <div id="story-extra" class="story-extra"></div>
     </main>
@@ -111,16 +114,16 @@
     <div class="drawer-backdrop" id="drawer-backdrop"></div>
     <div class="drawer-panel">
       <div class="drawer-tabs">
-        <button class="tab-btn active" data-tab="pack">Pack</button>
-        <button class="tab-btn" data-tab="spells">Spells</button>
-        <button class="tab-btn" data-tab="journal">Journal</button>
+        <button class="tab-btn active" data-tab="pack" data-i18n="tabPack">Pack</button>
+        <button class="tab-btn" data-tab="spells" data-i18n="tabSpells">Spells</button>
+        <button class="tab-btn" data-tab="journal" data-i18n="tabJournal">Journal</button>
       </div>
       <div class="drawer-body">
         <div class="tab-pane active" id="tab-pack"></div>
         <div class="tab-pane" id="tab-spells"></div>
         <div class="tab-pane" id="tab-journal"></div>
       </div>
-      <button class="btn btn-ghost drawer-close" id="drawer-close">Close</button>
+      <button class="btn btn-ghost drawer-close" id="drawer-close" data-i18n="drawerClose">Close</button>
     </div>
   </div>
 
@@ -131,7 +134,7 @@
       <h2 id="end-title"></h2>
       <p id="end-text" class="end-text"></p>
       <div class="end-stats" id="end-stats"></div>
-      <button class="btn btn-primary" id="btn-again">Set out again</button>
+      <button class="btn btn-primary" id="btn-again" data-i18n="setOutAgain">Set out again</button>
     </div>
   </section>
 
@@ -140,6 +143,8 @@
 
 <script src="js/engine.js"></script>
 <script src="js/story.js"></script>
+<script src="js/story.ru.js"></script>
+<script src="js/visuals.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/app.js"></script>
 </body>
