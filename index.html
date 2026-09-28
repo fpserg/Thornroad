@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thornroad</title>
+<meta name="description" content="A dice-driven gamebook of the Hush and the Cinder Spire. Play in any browser, install as an app.">
+<meta name="theme-color" content="#12141a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="root">
+
+  <!-- ===================== TITLE ===================== -->
+  <section id="screen-title" class="screen">
+    <div class="title-wrap">
+      <div class="title-mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" width="72" height="72">
+          <circle cx="60" cy="34" r="16" class="mark-moon"/>
+          <path d="M28 108 L40 60 L52 108 M50 108 L60 48 L70 108 M68 108 L80 60 L92 108" class="mark-spire"/>
+          <path d="M14 108 C 30 96, 34 116, 48 104 C 60 94, 66 114, 78 102 C 92 92, 98 112, 108 100" class="mark-thorn"/>
+        </svg>
+      </div>
+      <h1>Thornroad</h1>
+      <p class="title-sub">A gamebook of the Hush and the Cinder Spire</p>
+      <div class="title-actions">
+        <button class="btn btn-primary" id="btn-new-game">Set out</button>
+        <button class="btn btn-ghost" id="btn-continue" hidden>Continue journey</button>
+      </div>
+      <button class="link-btn" id="btn-how-to-play">How this works</button>
+      <p class="title-meta" id="title-meta"></p>
+    </div>
+  </section>
+
+  <!-- ===================== HOW TO PLAY ===================== -->
+  <section id="screen-help" class="screen" hidden>
+    <div class="panel-scroll">
+      <h2>How this works</h2>
+      <p>Thornroad is a dice-driven gamebook. You read a scene and choose what to do; the road, the dice, and your gear decide the rest.</p>
+      <ul class="help-list">
+        <li><strong>Skill, Stamina, Charm</strong> — rolled once at the start. Stamina is your health: at zero, your journey ends. Skill and Charm can rise or fall in play but never above where you began.</li>
+        <li><strong>Luck</strong> — six boxes. Testing your luck crosses one out; if it was already crossed, fortune wasn't with you. Crossed boxes can sometimes be cleared again.</li>
+        <li><strong>Combat</strong> — each round you and a foe both roll; whoever rolls higher wounds the other for 2 Stamina (ties are a parry). Some foes have Loyalty: wound them enough, or outlast them, and they'll break and run.</li>
+        <li><strong>Spells</strong> — chosen before you leave, ten charges to spend however you like across eight spells. Once cast, a spell is gone for the rest of the journey.</li>
+        <li><strong>The pack</strong> — seven slots for whatever you find or buy. Choose carefully.</li>
+      </ul>
+      <p>If your journey ends, the road remembers a little of what you learned — riddle answers and shortcuts stay with you next time.</p>
+      <button class="btn btn-primary" id="btn-help-back">Back</button>
+    </div>
+  </section>
+
+  <!-- ===================== CHARACTER CREATION ===================== -->
+  <section id="screen-create" class="screen" hidden>
+    <div class="panel-scroll">
+      <h2>Who sets out</h2>
+      <p class="muted">Roll to find out what you're made of. You'll carry these starting numbers as your ceiling for the whole journey.</p>
+      <div class="roll-card">
+        <button class="btn btn-primary" id="btn-roll">Roll the dice</button>
+        <div id="roll-result" class="roll-result" hidden>
+          <div class="stat-row"><span>Skill</span><strong id="roll-skill"></strong></div>
+          <div class="stat-row"><span>Stamina</span><strong id="roll-stamina"></strong></div>
+          <div class="stat-row"><span>Charm</span><strong id="roll-charm"></strong></div>
+        </div>
+      </div>
+      <div class="seed-row">
+        <label for="seed-input">Seed (optional, for a shared or repeatable road)</label>
+        <input id="seed-input" type="text" placeholder="leave blank for a fresh road" autocomplete="off" spellcheck="false">
+      </div>
+      <button class="btn btn-primary" id="btn-to-spells" disabled>Choose spells</button>
+    </div>
+  </section>
+
+  <!-- ===================== SPELL LOADOUT ===================== -->
+  <section id="screen-spells" class="screen" hidden>
+    <div class="panel-scroll">
+      <h2>Ten charges, eight spells</h2>
+      <p class="muted">Hale can only teach you ten castings in the time you have. Spend them however you like — repeats are allowed.</p>
+      <div id="spell-list" class="spell-list"></div>
+      <div class="spell-total">Charges assigned: <strong id="spell-total">0</strong> / 10</div>
+      <button class="btn btn-primary" id="btn-to-play" disabled>Take the road</button>
+    </div>
+  </section>
+
+  <!-- ===================== PLAY ===================== -->
+  <section id="screen-play" class="screen" hidden>
+    <header id="statusbar">
+      <div class="stat-pips">
+        <div class="pip" id="pip-skill" title="Skill"><span class="pip-label">SKL</span><span class="pip-val">0</span></div>
+        <div class="pip" id="pip-stamina" title="Stamina"><span class="pip-label">STA</span><span class="pip-val">0</span></div>
+        <div class="pip" id="pip-charm" title="Charm"><span class="pip-label">CHM</span><span class="pip-val">0</span></div>
+        <div class="pip pip-coins" id="pip-coins" title="Coins"><span class="pip-label">⛁</span><span class="pip-val">0</span></div>
+      </div>
+      <div class="luck-boxes" id="luck-boxes" title="Luck"></div>
+      <button class="menu-btn" id="btn-menu" aria-label="Open pack, spells and journal">☰</button>
+    </header>
+
+    <main id="storypane">
+      <div id="story-text" class="story-text"></div>
+      <div id="story-extra" class="story-extra"></div>
+    </main>
+
+    <nav id="choicebar"></nav>
+  </section>
+
+  <!-- ===================== DRAWER (pack / spells / journal) ===================== -->
+  <div id="drawer" class="drawer" hidden>
+    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+    <div class="drawer-panel">
+      <div class="drawer-tabs">
+        <button class="tab-btn active" data-tab="pack">Pack</button>
+        <button class="tab-btn" data-tab="spells">Spells</button>
+        <button class="tab-btn" data-tab="journal">Journal</button>
+      </div>
+      <div class="drawer-body">
+        <div class="tab-pane active" id="tab-pack"></div>
+        <div class="tab-pane" id="tab-spells"></div>
+        <div class="tab-pane" id="tab-journal"></div>
+      </div>
+      <button class="btn btn-ghost drawer-close" id="drawer-close">Close</button>
+    </div>
+  </div>
+
+  <!-- ===================== ENDING ===================== -->
+  <section id="screen-end" class="screen" hidden>
+    <div class="panel-scroll end-panel">
+      <div class="end-badge" id="end-badge"></div>
+      <h2 id="end-title"></h2>
+      <p id="end-text" class="end-text"></p>
+      <div class="end-stats" id="end-stats"></div>
+      <button class="btn btn-primary" id="btn-again">Set out again</button>
+    </div>
+  </section>
+
+  <div id="toast" class="toast" hidden></div>
+</div>
+
+<script src="js/engine.js"></script>
+<script src="js/story.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
