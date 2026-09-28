@@ -59,6 +59,15 @@
     <div class="panel-scroll">
       <h2 data-i18n="whoSetsOut">Who sets out</h2>
       <p class="muted" data-i18n="createMuted">Roll to find out what you're made of. You'll carry these starting numbers as your ceiling for the whole journey.</p>
+      <div class="difficulty-row">
+        <div class="difficulty-label" data-i18n="difficultyLabel">Difficulty</div>
+        <div class="difficulty-options" id="difficulty-options" role="group">
+          <button type="button" class="diff-btn" data-diff="easy" data-i18n="diffEasy">Easy</button>
+          <button type="button" class="diff-btn active" data-diff="normal" data-i18n="diffNormal">Normal</button>
+          <button type="button" class="diff-btn" data-diff="hard" data-i18n="diffHard">Hard</button>
+        </div>
+        <p class="difficulty-desc" id="difficulty-desc">The road as it's meant to be walked.</p>
+      </div>
       <div class="roll-card">
         <button class="btn btn-primary" id="btn-roll" data-i18n="rollDice">Roll the dice</button>
         <div id="create-dice-stage"></div>

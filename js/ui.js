@@ -26,6 +26,11 @@
   let locale = 'en';
   try { locale = localStorage.getItem('thornroad.locale') || 'en'; } catch (e) { /* ignore */ }
 
+  // ---------------- DIFFICULTY ----------------
+  let chosenDifficulty = 'normal';
+  try { chosenDifficulty = localStorage.getItem('thornroad.difficulty') || 'normal'; } catch (e) { /* ignore */ }
+  if (!T.DIFFICULTIES || !T.DIFFICULTIES[chosenDifficulty]) chosenDifficulty = 'normal';
+
   function spellName(id) { return (locale === 'ru' && SPELL_STRINGS_RU[id] && SPELL_STRINGS_RU[id].name) || SPELL_DEFS[id].name; }
   function spellDesc(id) { return (locale === 'ru' && SPELL_STRINGS_RU[id] && SPELL_STRINGS_RU[id].desc) || SPELL_DEFS[id].desc; }
   function itemDisplayName(id, fallback) { return (locale === 'ru' && ITEM_NAMES_RU[id]) || fallback; }
@@ -74,7 +79,13 @@
     slotsMeter: (used, limit, flask) => used + ' / ' + limit + ' slots used · flask: ' + flask + ' sips',
     chargesLeft: n => n + ' left',
     journalEmpty: 'Nothing written down yet.',
-    endStats: (skl, sta, staMax, chm, coins) => `Skill ${skl} · Stamina ${sta}/${staMax} · Charm ${chm} · ${coins} coins carried`
+    endStats: (skl, sta, staMax, chm, coins, diff) => `Skill ${skl} · Stamina ${sta}/${staMax} · Charm ${chm} · ${coins} coins carried · ${diff}`,
+    diffName: { easy: 'Easy', normal: 'Normal', hard: 'Hard' },
+    diffDesc: {
+      easy: 'A gentler road — more Stamina to start, lighter blows, and traps that sting rather than maim.',
+      normal: "The road as it's meant to be walked.",
+      hard: 'The Hush shows no mercy — less Stamina to start, harder-hitting foes, and traps that draw real blood.'
+    }
   };
   const STR_RU = {
     fortuneNotice: 'Всё может решить ваша удача.',
@@ -116,7 +127,13 @@
     slotsMeter: (used, limit, flask) => used + ' / ' + limit + ' слотов занято · фляга: ' + flask + ' глотков',
     chargesLeft: n => 'осталось: ' + n,
     journalEmpty: 'Пока ничего не записано.',
-    endStats: (skl, sta, staMax, chm, coins) => `Ловкость ${skl} · Сила ${sta}/${staMax} · Обаяние ${chm} · монет с собой: ${coins}`
+    endStats: (skl, sta, staMax, chm, coins, diff) => `Ловкость ${skl} · Сила ${sta}/${staMax} · Обаяние ${chm} · монет с собой: ${coins} · ${diff}`,
+    diffName: { easy: 'Лёгкая', normal: 'Обычная', hard: 'Сложная' },
+    diffDesc: {
+      easy: 'Более мягкая дорога — больше Силы для начала, слабее удары, а ловушки скорее жалят, чем калечат.',
+      normal: 'Дорога такая, какой она задумана.',
+      hard: 'Тишь не знает пощады — меньше Силы для начала, враги бьют сильнее, а ловушки ранят по-настоящему.'
+    }
   };
   function S() { return locale === 'ru' ? STR_RU : STR_EN; }
   function tr(key, ...args) {
@@ -198,6 +215,8 @@
   // Static screen chrome (title, help, create, spells, drawer, etc.) translated
   // via data-i18n attributes rather than element-by-element JS.
   const STATIC_RU = {
+    difficultyLabel: 'Сложность',
+    diffEasy: 'Лёгкая', diffNormal: 'Обычная', diffHard: 'Сложная',
     titleSub: 'Гейм-бук о Тиши и Пепельном Шпиле',
     setOut: 'Отправиться в путь',
     continueJourney: 'Продолжить путь',
@@ -326,17 +345,36 @@
 
   // ---------------- CHARACTER CREATION ----------------
   let pendingStats = null;
+  function updateDifficultyDesc() {
+    const el = document.getElementById('difficulty-desc');
+    if (el) el.textContent = (S().diffDesc && S().diffDesc[chosenDifficulty]) || '';
+  }
   function resetCreateScreen() {
     pendingStats = null;
     document.getElementById('roll-result').hidden = true;
     document.getElementById('btn-to-spells').disabled = true;
     document.getElementById('seed-input').value = '';
+    updateDifficultyDesc();
   }
   function initCreate() {
+    $all('.diff-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        chosenDifficulty = btn.dataset.diff;
+        try { localStorage.setItem('thornroad.difficulty', chosenDifficulty); } catch (e) { /* ignore */ }
+        $all('.diff-btn').forEach(b => b.classList.toggle('active', b === btn));
+        // Any roll already made reflects the old difficulty's Stamina bonus — clear it
+        // (also re-applies the description text for the new selection).
+        resetCreateScreen();
+      });
+    });
+    $all('.diff-btn').forEach(b => b.classList.toggle('active', b.dataset.diff === chosenDifficulty));
+    updateDifficultyDesc();
+
     document.getElementById('btn-roll').addEventListener('click', () => {
       const seedVal = document.getElementById('seed-input').value.trim();
       if (seedVal) engine.setSeed(seedVal);
       else engine.setSeed(Date.now() >>> 0);
+      engine.setDifficulty(chosenDifficulty);
       pendingStats = engine.rollNewCharacter();
       const rollBtn = document.getElementById('btn-roll');
       const stage = document.getElementById('create-dice-stage');
@@ -422,7 +460,15 @@
     effects.forEach(e => {
       if (e.type === 'stat') {
         if (e.stat === 'stamina') {
-          if (e.delta < 0) engine.damageStamina(-e.delta); else engine.healStamina(e.delta);
+          if (e.delta < 0) {
+            // Narrative hazard damage (traps, rockslides, etc.) scales with
+            // difficulty too, not just combat — floored at 1 so a hazard is
+            // never fully harmless even on Easy.
+            const mult = engine.diffCfg ? engine.diffCfg().hazardMult : 1;
+            engine.damageStamina(Math.max(1, Math.round(-e.delta * mult)));
+          } else {
+            engine.healStamina(e.delta);
+          }
         } else if (e.stat === 'skill') {
           s.skill = Math.max(1, s.skill + e.delta);
         } else if (e.stat === 'charm') {
@@ -848,7 +894,9 @@
     }
     engine.clearRun();
 
-    stats.innerHTML = tr('endStats', s.skill, s.stamina, s.maxStamina, s.charm, s.coins);
+    const diffKey = s.difficulty || 'normal';
+    const diffLabel = (S().diffName && S().diffName[diffKey]) || diffKey;
+    stats.innerHTML = tr('endStats', s.skill, s.stamina, s.maxStamina, s.charm, s.coins, diffLabel);
   }
 
   document.getElementById('btn-again').addEventListener('click', () => {

@@ -1,5 +1,5 @@
 // Thornroad service worker — offline-first cache for a small, fixed asset set.
-const CACHE = 'thornroad-v2';
+const CACHE = 'thornroad-v3';
 const ASSETS = [
   './',
   './index.html',

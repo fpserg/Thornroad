@@ -34,6 +34,16 @@
     mend:      { name: 'Mend',      verb: 'cast Mend',      desc: 'Restores 8 Stamina (never above your start).' }
   };
 
+  // Difficulty is a runtime multiplier layer, not a second copy of the story
+  // graph: story.js stays the single "Normal" source of truth, and these
+  // knobs scale starting Stamina, enemy stats, and narrative hazard damage
+  // at the point they're applied.
+  const DIFFICULTIES = {
+    easy:   { staminaBonus: 3,  enemySkillDelta: -1, enemyScaleMult: 0.9,  enemyDmgDelta: -1, hazardMult: 0.75 },
+    normal: { staminaBonus: 0,  enemySkillDelta: 0,  enemyScaleMult: 1,    enemyDmgDelta: 0,   hazardMult: 1 },
+    hard:   { staminaBonus: -1, enemySkillDelta: 0,  enemyScaleMult: 1.05, enemyDmgDelta: 1,   hazardMult: 1.1 }
+  };
+
   function statRow(sum) {
     // Own balance table (2d6 sum -> Skill, Stamina, Charm). Not derived from any source text.
     // Stamina raised ~15-20% over the original vertical-slice numbers so an unlucky run
@@ -52,12 +62,25 @@
     this.rng = makeRNG(Date.now() >>> 0);
     this.state = null;
     this.meta = null; // cross-run persistent memory ("the wood remembers")
+    this.difficulty = 'normal'; // pending difficulty, used before a run's state exists
   }
 
   Engine.prototype.setSeed = function (seed) {
     const n = typeof seed === 'number' ? seed >>> 0 : seedFromString(String(seed));
     this.rng = makeRNG(n);
     this.seedLabel = String(seed);
+  };
+
+  Engine.prototype.setDifficulty = function (key) {
+    this.difficulty = DIFFICULTIES[key] ? key : 'normal';
+  };
+  // Single source of truth for the active difficulty's knobs: state.difficulty
+  // once a run exists (so a reloaded/continued save keeps its own setting,
+  // and an old save with no difficulty field quietly falls back to Normal),
+  // this.difficulty before that (character creation).
+  Engine.prototype.diffCfg = function () {
+    const key = (this.state && this.state.difficulty) || this.difficulty || 'normal';
+    return DIFFICULTIES[key] || DIFFICULTIES.normal;
   };
 
   Engine.prototype.rollDie = function () { return 1 + Math.floor(this.rng() * 6); };
@@ -82,7 +105,8 @@
 
   Engine.prototype.rollNewCharacter = function () {
     const { a, b, sum } = this.roll2Faces();
-    const [skill, stamina, charm] = statRow(sum);
+    const [skill, baseStamina, charm] = statRow(sum);
+    const stamina = Math.max(6, baseStamina + this.diffCfg().staminaBonus);
     return { skill, stamina, charm, sum, diceA: a, diceB: b };
   };
 
@@ -97,6 +121,7 @@
 
     this.state = {
       nodeId: 'n1',
+      difficulty: this.difficulty || 'normal',
       skill: stats.skill, maxSkill: stats.skill,
       stamina: stats.stamina, maxStamina: stats.stamina,
       charm: stats.charm, baseCharm: stats.charm,
@@ -216,15 +241,16 @@
 
   // ---- combat ----
   Engine.prototype.startCombat = function (def) {
+    const cfg = this.diffCfg();
     const enemies = def.enemies.map((e, i) => ({
       id: 'e' + i,
       name: e.name,
-      skill: e.skill,
-      stamina: e.stamina,
-      maxStamina: e.stamina,
-      loyalty: (typeof e.loyalty === 'number') ? e.loyalty : null,
+      skill: e.skill + cfg.enemySkillDelta,
+      stamina: Math.max(2, Math.round(e.stamina * cfg.enemyScaleMult)),
+      maxStamina: Math.max(2, Math.round(e.stamina * cfg.enemyScaleMult)),
+      loyalty: (typeof e.loyalty === 'number') ? Math.max(4, Math.round(e.loyalty * cfg.enemyScaleMult)) : null,
       parryStreak: 0,
-      dmg: e.dmg || 2,
+      dmg: Math.max(1, (e.dmg || 2) + cfg.enemyDmgDelta),
       fled: false,
       dead: false,
       skillMod: 0
@@ -409,5 +435,6 @@
   global.Thornroad = global.Thornroad || {};
   global.Thornroad.Engine = Engine;
   global.Thornroad.SPELL_DEFS = SPELL_DEFS;
+  global.Thornroad.DIFFICULTIES = DIFFICULTIES;
   global.Thornroad.seedFromString = seedFromString;
 })(window);

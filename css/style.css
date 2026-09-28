@@ -139,6 +139,19 @@ h1 {
 .help-list strong { color: var(--parchment); }
 
 /* ---- character creation ---- */
+.difficulty-row { margin: 18px 0; }
+.difficulty-label { font-size: .82rem; color: var(--parchment-dim); margin-bottom: 6px; }
+.difficulty-options { display: flex; gap: 8px; }
+.diff-btn {
+  flex: 1; font-family: var(--sans); font-size: .92rem; font-weight: 600;
+  background: var(--ink-2); border: 1px solid var(--line); color: var(--parchment-dim);
+  padding: 10px 6px; border-radius: var(--radius); cursor: pointer;
+  transition: border-color .15s ease, color .15s ease, background .15s ease;
+}
+.diff-btn:hover { border-color: var(--parchment-dim); }
+.diff-btn.active { background: var(--moss-dim); border-color: var(--moss); color: var(--parchment); }
+.difficulty-desc { font-size: .8rem; color: var(--parchment-dim); margin-top: 8px; min-height: 1.3em; }
+
 .roll-card {
   background: var(--ink-2); border: 1px solid var(--line); border-radius: var(--radius);
   padding: 22px; margin: 20px 0; text-align: center;
