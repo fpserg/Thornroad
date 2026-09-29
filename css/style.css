@@ -544,3 +544,222 @@ h1 {
   .zone-svg * { animation: none !important; }
   .die-face { animation: none !important; }
 }
+
+/* =====================================================================
+   90s ADVENTURE SKIN — carved stone interface, gold rims, gem corners and
+   pixel type, in the spirit of early-90s VGA point-and-click games. The
+   location paintings themselves are drawn by js/scenes.js; the stone tile
+   and gold cursor it generates are exposed as --stone-tile / --gold-cursor.
+   ===================================================================== */
+@font-face {
+  font-family: 'Pixelify Sans';
+  font-weight: 400 700; font-display: swap;
+  src: url(../fonts/pixelify-sans-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Pixelify Sans';
+  font-weight: 400 700; font-display: swap;
+  src: url(../fonts/pixelify-sans-cyrillic.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Jacquarda Bastarda 9';
+  font-weight: 400; font-display: swap;
+  src: url(../fonts/jacquarda-bastarda-9-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F;
+}
+
+:root {
+  --pixel: 'Pixelify Sans', var(--sans);
+  --gothic: 'Jacquarda Bastarda 9', 'Pixelify Sans', var(--serif);
+  --stone-hi: #7a7490;
+  --stone-mid: #3a3548;
+  --stone-lo: #120e18;
+  --gold-hi: #fff0a0;
+  --gold-lo: #6a4a18;
+  --bevel: inset 2px 2px 0 var(--stone-hi), inset -2px -2px 0 var(--stone-lo);
+  --bevel-in: inset 2px 2px 0 var(--stone-lo), inset -2px -2px 0 var(--stone-hi);
+  --stone-bg: var(--stone-tile, none) 0 0 / 96px 96px, var(--stone-mid);
+}
+
+html.has-scenes body { cursor: var(--gold-cursor), auto; }
+html.has-scenes button, html.has-scenes a, html.has-scenes .btn { cursor: var(--gold-cursor), pointer; }
+html.has-scenes button:disabled { cursor: var(--gold-cursor), not-allowed; }
+
+body {
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(58,40,90,.35), transparent 70%),
+    #0c0a12;
+}
+#screen-title, #screen-end {
+  background: radial-gradient(120% 90% at 50% -10%, #221a36 0%, #0c0a12 65%);
+}
+
+/* ---- type ---- */
+h1, .panel-scroll h2, #end-title {
+  font-family: var(--gothic); font-weight: 400;
+  color: #e8c870;
+  text-shadow: 2px 2px 0 #2a1808, 0 0 18px rgba(201,162,75,.25);
+  letter-spacing: .02em;
+}
+h1 { font-size: clamp(2.8rem, 12vw, 4rem); line-height: 1; }
+.panel-scroll h2, #end-title { font-size: 2rem; }
+.btn, .choice-btn, .diff-btn, .tab-btn, .locale-btn, .link-btn, .pip, .spell-chip,
+.mini-btn, .buy-btn, .enemy-target-btn, .clash-tile, .clash-vs, .dice-label,
+.difficulty-label, .seed-row label, .spell-total, .slots-meter, .toast, .notice {
+  font-family: var(--pixel);
+}
+.story-text { color: #efe6cc; }
+.story-text p:first-child::first-letter {
+  font-family: var(--gothic); font-weight: 400; color: #e8c870;
+  text-shadow: 2px 2px 0 #2a1808; font-size: 3.4em; padding-top: 6px;
+}
+
+/* ---- the painting frame ---- */
+html.has-scenes .title-mark { display: none; }
+.title-plate { margin: 0 auto 22px; max-width: 420px; }
+.title-plate:empty { display: none; }
+
+.book-plate {
+  overflow: visible;
+  padding: 7px;
+  border: 0; border-radius: 0;
+  background: var(--stone-bg);
+  image-rendering: pixelated;
+  box-shadow:
+    var(--bevel),
+    0 0 0 2px #07050a,
+    0 8px 22px rgba(0,0,0,.55);
+}
+.zone-banner.book-plate, .end-plate.book-plate { height: auto; }
+.zone-banner.book-plate { margin: 0 0 8px; }
+.scene-canvas {
+  display: block; width: 100%; height: auto; aspect-ratio: 320 / 140;
+  image-rendering: pixelated; image-rendering: crisp-edges;
+  background: #000;
+  box-shadow: 0 0 0 2px #c9a24b, 0 0 0 3px var(--gold-lo), 0 0 0 4px #07050a;
+}
+/* faceted gems set into the frame corners */
+.scene-gem {
+  position: absolute; width: 12px; height: 12px; z-index: 1;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  box-shadow: none;
+}
+.scene-gem::after {
+  content: ""; position: absolute; left: 3px; top: 3px; width: 3px; height: 3px; background: rgba(255,255,255,.85);
+}
+.sg-0 { top: -3px; left: -3px; } .sg-1 { top: -3px; right: -3px; }
+.sg-2 { bottom: -3px; left: -3px; } .sg-3 { bottom: -3px; right: -3px; }
+.gem-ruby     { background: linear-gradient(135deg, #ff8a7a 0 30%, #d0202a 30% 65%, #5a0a14 65%); }
+.gem-emerald  { background: linear-gradient(135deg, #b8ffa8 0 30%, #2aa040 30% 65%, #0a3a18 65%); }
+.gem-sapphire { background: linear-gradient(135deg, #a8d0ff 0 30%, #2a50d0 30% 65%, #0a1450 65%); }
+.gem-topaz    { background: linear-gradient(135deg, #fff0a0 0 30%, #e0a020 30% 65%, #5a3a08 65%); }
+
+/* ---- stone panels ---- */
+.book-page {
+  border: 0; border-radius: 0;
+  background:
+    linear-gradient(rgba(12,9,18,.86), rgba(12,9,18,.9)),
+    var(--stone-bg);
+  box-shadow:
+    inset 0 0 0 2px #1a1424,
+    inset 0 0 0 3px rgba(201,162,75,.35),
+    var(--bevel),
+    0 0 0 2px #07050a,
+    0 12px 26px rgba(0,0,0,.45);
+}
+.book-page::before { display: none; }
+.page-corner { opacity: .75; color: #c9a24b; }
+
+#statusbar {
+  background: var(--stone-bg);
+  backdrop-filter: none;
+  border-bottom: 0;
+  box-shadow: var(--bevel), 0 2px 0 #c9a24b, 0 3px 0 var(--gold-lo), 0 6px 12px rgba(0,0,0,.5);
+}
+.pip {
+  background: #14101c; border: 0; border-radius: 0;
+  box-shadow: var(--bevel-in);
+  padding: 5px 8px;
+}
+.pip-label { color: #a89ec0; }
+.pip-val { color: #f0e6c8; }
+.pip-coins .pip-val { color: #e8c870; }
+.luck-box { border-radius: 0; border: 2px solid #c9a24b; background: #14101c; box-shadow: inset 1px 1px 0 #000; }
+.luck-box.used { background: #3a1010; border-color: #6a2a20; }
+.menu-btn { background: var(--stone-bg); border: 0; border-radius: 0; box-shadow: var(--bevel), 0 0 0 2px #07050a; color: #e8c870; }
+
+/* ---- buttons: bevelled stone slabs with gold lettering ---- */
+.btn, .choice-btn, .diff-btn, .tab-btn, .spell-chip, .mini-btn, .buy-btn, .enemy-target-btn, .stepper button, .locale-btn {
+  border: 0; border-radius: 0;
+  background: var(--stone-bg);
+  color: #e8c870;
+  box-shadow: var(--bevel), 0 0 0 2px #07050a;
+  text-shadow: 1px 1px 0 #1a1008;
+}
+.btn:active, .choice-btn:active, .diff-btn:active, .tab-btn:active, .spell-chip:active,
+.mini-btn:active, .buy-btn:active, .stepper button:active {
+  box-shadow: var(--bevel-in), 0 0 0 2px #07050a; transform: none;
+}
+.btn-primary {
+  background: linear-gradient(#e0b858, #a8802c);
+  color: #1e1206; text-shadow: 1px 1px 0 rgba(255,240,160,.5);
+  box-shadow: inset 2px 2px 0 var(--gold-hi), inset -2px -2px 0 var(--gold-lo), 0 0 0 2px #07050a;
+}
+.btn-primary:hover { background: linear-gradient(#f0cc6c, #b8903a); }
+.btn-primary:active { box-shadow: inset 2px 2px 0 var(--gold-lo), inset -2px -2px 0 var(--gold-hi), 0 0 0 2px #07050a; }
+.btn-primary:disabled {
+  background: var(--stone-bg); color: #6a6478; text-shadow: none;
+  box-shadow: var(--bevel), 0 0 0 2px #07050a; filter: saturate(.4) brightness(.8);
+}
+.btn-ghost:hover, .locale-btn:hover { color: var(--gold-hi); }
+.link-btn { color: #a89ec0; }
+
+.choice-btn {
+  position: relative; padding: 13px 15px 13px 30px; font-size: 1rem; line-height: 1.35;
+}
+.choice-btn::before {
+  content: "▸"; position: absolute; left: 12px; top: 13px; color: #6a6478; transition: color .1s;
+}
+.choice-btn:hover { background: var(--stone-bg); color: var(--gold-hi); border: 0; }
+.choice-btn:hover::before { color: var(--gold-hi); }
+.choice-btn.primary { box-shadow: var(--bevel), 0 0 0 2px #c9a24b; }
+.choice-btn.danger  { box-shadow: var(--bevel), 0 0 0 2px #8a2a20; }
+.choice-btn[disabled] { color: #8a8098; filter: brightness(.75); }
+.choice-btn .req-note { color: #a89ec0; }
+
+.diff-btn { color: #a89ec0; }
+.diff-btn.active { background: var(--stone-bg); color: var(--gold-hi); box-shadow: var(--bevel-in), 0 0 0 2px #c9a24b; }
+.tab-btn { color: #a89ec0; }
+.tab-btn.active { color: var(--gold-hi); background: var(--stone-bg); box-shadow: var(--bevel-in), 0 0 0 2px #c9a24b; border: 0; }
+.enemy-target-btn.selected { color: var(--gold-hi); box-shadow: var(--bevel-in), 0 0 0 2px #c9a24b; }
+
+.roll-card, .spell-row, .shop-row, .combat-panel, .pack-item, .journal-entry {
+  border: 0; border-radius: 0;
+  background: linear-gradient(rgba(12,9,18,.78), rgba(12,9,18,.84)), var(--stone-bg);
+  box-shadow: var(--bevel), 0 0 0 2px #07050a;
+}
+#seed-input, .riddle-form input {
+  border: 0; border-radius: 0; background: #0e0b14; color: #f0e6c8;
+  box-shadow: var(--bevel-in), 0 0 0 2px #07050a; font-family: var(--pixel);
+}
+.drawer-panel { background: var(--stone-bg); border-left: 0; box-shadow: var(--bevel), -2px 0 0 #c9a24b, -6px 0 18px rgba(0,0,0,.6); }
+.drawer-tabs { border-bottom: 2px solid #07050a; }
+.bar-track { border-radius: 0; background: #0e0b14; box-shadow: inset 1px 1px 0 #000; }
+.bar-fill { background: repeating-linear-gradient(90deg, #d0302a 0 4px, #a01e1a 4px 6px); }
+.toast { border: 0; border-radius: 0; background: var(--stone-bg); color: #e8c870; box-shadow: var(--bevel), 0 0 0 2px #c9a24b, 0 6px 20px rgba(0,0,0,.5); }
+.notice { border-radius: 0; }
+
+/* dice + clash tiles as ivory bone and carved stone */
+.die-face rect { fill: #e8dcc0; stroke: #6a5a3a; }
+.die-face circle { fill: #3a0a10; }
+.die-face.die-settled rect { stroke: #c9a24b; }
+.clash-tile { border: 0; border-radius: 0; background: var(--stone-bg); box-shadow: var(--bevel), 0 0 0 2px #07050a; color: #f0e6c8; }
+.clash-tile.clash-win { color: var(--gold-hi); box-shadow: var(--bevel-in), 0 0 0 2px #c9a24b; border: 0; }
+.clash-tile.clash-tie { color: #a89ec0; box-shadow: var(--bevel), 0 0 0 2px #6a6478; border: 0; }
+
+.end-badge { border-radius: 0; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); border: 0; width: 44px; height: 44px; font-family: var(--pixel); }
+.end-badge.victory { background: linear-gradient(135deg, #b8ffa8 0 30%, #2aa040 30% 65%, #0a3a18 65%); color: #fff; }
+.end-badge.death   { background: linear-gradient(135deg, #ff8a7a 0 30%, #d0202a 30% 65%, #5a0a14 65%); color: #fff; }
+.end-badge.retreat { background: linear-gradient(135deg, #fff0a0 0 30%, #e0a020 30% 65%, #5a3a08 65%); color: #2a1808; }

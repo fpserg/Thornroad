@@ -311,6 +311,8 @@
       try { return !!localStorage.getItem('thornroad.run'); } catch (e) { return false; }
     })();
     document.getElementById('btn-continue').hidden = !hasRun;
+    const titlePlate = document.getElementById('title-plate');
+    if (titlePlate && T.Scenes && !titlePlate.firstChild) T.Scenes.mount(titlePlate, 'title');
     const meta = engine.meta;
     let metaLine = '';
     if (meta.beaten) metaLine = tr('hushReceded');
@@ -572,10 +574,12 @@
   function updateZoneBanner(nodeId) {
     const el = document.getElementById('zone-banner');
     if (!el) return;
-    const zone = zoneFor(nodeId);
-    if (zone === lastZoneKey) return; // keep the current banner's animation running uninterrupted
-    lastZoneKey = zone;
-    el.innerHTML = ZONE_BANNERS[zone] || '';
+    const Scenes = T.Scenes;
+    const key = Scenes ? 'scene:' + Scenes.sceneFor(nodeId) : zoneFor(nodeId);
+    if (key === lastZoneKey && el.firstChild) return; // keep the current painting's animation running uninterrupted
+    lastZoneKey = key;
+    if (Scenes) Scenes.mount(el, Scenes.sceneFor(nodeId));
+    else el.innerHTML = ZONE_BANNERS[key] || '';
   }
 
   function paragraphs(text) {
@@ -879,7 +883,10 @@
     badge.className = 'end-badge ' + node.ending.type;
     badge.textContent = node.ending.type === 'victory' ? '✓' : (node.ending.type === 'retreat' ? '~' : '✕');
     const plate = document.getElementById('end-plate');
-    if (plate) plate.innerHTML = ENDING_BANNERS[node.ending.type] || '';
+    if (plate) {
+      if (T.Scenes) T.Scenes.mount(plate, node.ending.type);
+      else plate.innerHTML = ENDING_BANNERS[node.ending.type] || '';
+    }
     title.textContent = node.ending.title;
     let body = node.text;
     if (node.ending.type === 'death') {
