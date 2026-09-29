@@ -6,6 +6,15 @@
     window.Thornroad.UI.init();
 
     if ('serviceWorker' in navigator) {
+      // When an updated worker takes over (e.g. replacing an old cache-first
+      // one), reload once so the page isn't left running a mix of old files.
+      const hadController = !!navigator.serviceWorker.controller;
+      let reloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!hadController || reloaded) return;
+        reloaded = true;
+        window.location.reload();
+      });
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').catch(() => { /* offline install not critical to play */ });
       });

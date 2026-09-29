@@ -1,5 +1,5 @@
 // Thornroad service worker — offline-first cache for a small, fixed asset set.
-const CACHE = 'thornroad-v5';
+const CACHE = 'thornroad-v6';
 const ASSETS = [
   './',
   './index.html',
@@ -34,20 +34,21 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Network-first: always try for the freshest files (bypassing the HTTP cache,
+// so a new release never mixes with stale pages or scripts), refresh the
+// offline copy on success, and fall back to that copy only when offline.
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+  const req = event.request;
+  if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const network = fetch(event.request)
-        .then((res) => {
-          if (res && res.ok) {
-            const copy = res.clone();
-            caches.open(CACHE).then((cache) => cache.put(event.request, copy));
-          }
-          return res;
-        })
-        .catch(() => cached);
-      return cached || network;
-    })
+    fetch(req, { cache: 'no-cache' })
+      .then((res) => {
+        if (res && res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE).then((cache) => cache.put(req, copy));
+        }
+        return res;
+      })
+      .catch(() => caches.match(req, { ignoreSearch: true }).then((cached) => cached || caches.match('./index.html')))
   );
 });
